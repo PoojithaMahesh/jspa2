@@ -54,7 +54,11 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws S
 	
 	if(value) {
 		dao.saveStudent(student);
+		req.setAttribute("message", "SignedUpSuccessfullyPleaseLogin");
+		RequestDispatcher dispatcher=req.getRequestDispatcher("login.jsp");
+		dispatcher.forward(req, resp);
 	}else {
+		req.setAttribute("message", "Sorry Email already exist!!!!");
 		RequestDispatcher dispatcher=req.getRequestDispatcher("signup.jsp");
 		dispatcher.include(req, resp);		
 	}

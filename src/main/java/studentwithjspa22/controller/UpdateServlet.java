@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import studentwithjspa22.dao.StudentDao;
 import studentwithjspa22.dto.Student;
@@ -19,10 +20,22 @@ protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws Se
 	StudentDao dao=new StudentDao();
 	Student student=dao.getStudentById(id);
 	
-	req.setAttribute("student", student);
-	RequestDispatcher dispatcher=req.getRequestDispatcher("edit.jsp");
-	dispatcher.forward(req, resp);
+	HttpSession httpSession=req.getSession();
 	
+	String name=(String) httpSession.getAttribute("studentwhologgedIn");
+	
+	
+	if(name!=null) {
+//		he is not a scammer he is coming from the login page
+		req.setAttribute("student", student);
+		RequestDispatcher dispatcher=req.getRequestDispatcher("edit.jsp");
+		dispatcher.forward(req, resp);
+	}else {
+//		he is a scammer
+		req.setAttribute("message", "Hey Scammer please login first");
+		RequestDispatcher dispatcher=req.getRequestDispatcher("login.jsp");
+		dispatcher.include(req, resp);
+	}
 	
 	
 	

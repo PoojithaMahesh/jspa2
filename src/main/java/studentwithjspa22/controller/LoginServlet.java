@@ -6,9 +6,11 @@ import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import studentwithjspa22.dao.StudentDao;
 import studentwithjspa22.dto.Student;
@@ -23,10 +25,12 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws S
 	List<Student> students=dao.getAllStudents();
 	boolean value=false;
 	String studentPassword=null;
+	String studentName=null;
 	for(Student student:students) {
 		if(email.equals(student.getEmail())) {
 			value=true;
 			studentPassword=student.getPassword();
+			studentName=student.getName();
 			break;
 		}
 	}
@@ -35,6 +39,15 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws S
 //		email is present
 		if(password.equals(studentPassword)) {
 //			login success
+			Cookie cookie=new Cookie("studentwhologgedIn", studentName);
+			resp.addCookie(cookie);
+			
+//			httpsession
+			HttpSession httpSession=req.getSession();
+			
+			httpSession.setAttribute("studentwhologgedIn", studentName);
+			
+			
 			req.setAttribute("list",students);
 			RequestDispatcher dispatcher=req.getRequestDispatcher("display.jsp");
 			dispatcher.forward(req, resp);
